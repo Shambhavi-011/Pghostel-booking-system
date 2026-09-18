@@ -1,0 +1,16 @@
+pg_id,pg_name,sharing_type,has_ac,has_wifi,has_food,distance_to_miet,photos_count,amenities_count,is_fake,rent
+1,Sunrise Girls Hostel,2,1,1,1,2,5,4,0,8500
+2,MIET Boys PG,3,0,1,1,1,3,3,0,6000
+3,Luxury Stay PG,1,1,1,1,3,8,5,0,12000
+4,Budget Rooms,3,0,0,0,5,2,1,0,3500
+5,Elite Scholars Hostel,2,1,1,1,2,6,4,0,9000
+6,Fake PG Scam 1,1,1,1,1,1,0,5,1,1500
+7,Roorkee Road Stay,2,0,1,0,4,4,2,0,5500
+8,Campus View Hostel,2,1,1,1,1,5,4,0,7500
+9,Shanti Niwas PG,1,0,0,1,3,3,2,0,5000
+10,Fraud Listing 2,2,1,1,1,2,0,4,1,1200
+11,Premium Girls PG,1,1,1,1,1,7,5,0,11000
+12,Student Hub,3,1,1,0,2,4,3,0,6500
+13,Green Valley Hostel,2,1,0,1,4,5,3,0,7000
+14,Scammer Paradise,1,1,1,1,1,0,5,1,999
+15,City Center PG,2,0,1,1,5,4,3,0,6200

@@ -1,0 +1,8 @@
+pg_id,pg_name,rent,distance_to_miet,sharing_type,has_ac
+101,Sunrise Girls Hostel,8000,2,2,1
+102,MIET Boys PG,6000,1,3,0
+103,Luxury Stay PG,12000,3,1,1
+104,Budget Rooms,4000,5,3,0
+105,Elite Scholars Hostel,9000,2,2,1
+106,Roorkee Road PG,5500,4,2,0
+107,Campus View Hostel,7500,1,2,1
