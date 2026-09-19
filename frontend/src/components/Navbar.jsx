@@ -1,27 +1,78 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  
+  // Browser ke local storage se user ka role check karo
+  const userRole = localStorage.getItem('userRole');
+
+  const handleLogout = () => {
+    localStorage.clear(); // Saara saved data (role, email) delete kar do
+    navigate('/login'); // Wapas login page par bhej do
+  };
+
   return (
-    <nav style={{
-      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      padding: '15px 40px', background: 'rgba(255, 255, 255, 0.8)', 
-      backdropFilter: 'blur(10px)', position: 'sticky', top: 0, zIndex: 1000,
-      borderBottom: '1px solid #e6d9ef'
+    <nav style={{ 
+      backgroundColor: '#fff', 
+      padding: '15px 40px', 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 100
     }}>
-      {/* Brand Logo / Name */}
-      <Link to="/" style={{ textDecoration: 'none', color: '#80608f', fontSize: '24px', fontWeight: 'bold' }}>
+      {/* LOGO */}
+      <Link to="/" style={{ textDecoration: 'none', color: '#4a3b52', fontSize: '1.5rem', fontWeight: 'bold' }}>
         CampusNest ✨
       </Link>
 
-      {/* Login Button */}
-      <Link to="/login" style={{
-        background: '#af87c8', color: 'white', padding: '10px 20px', 
-        borderRadius: '20px', textDecoration: 'none', fontWeight: 'bold',
-        boxShadow: '0 4px 6px rgba(175, 135, 200, 0.3)'
-      }}>
-        Login / Sign Up
-      </Link>
+      {/* NAVIGATION LINKS */}
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <Link to="/" style={{ textDecoration: 'none', color: '#786d84', fontWeight: '500' }}>
+          Home
+        </Link>
+        
+        {/* Agar Owner login hai tabhi Owner Dashboard dikhao */}
+        {userRole === 'owner' && (
+          <Link to="/owner" style={{ textDecoration: 'none', color: '#786d84', fontWeight: '500' }}>
+            Owner Dashboard
+          </Link>
+        )}
+        
+        {/* LOGIN / LOGOUT BUTTON LOGIC */}
+        {userRole ? (
+          <button 
+            onClick={handleLogout}
+            style={{ 
+              padding: '8px 20px', 
+              backgroundColor: '#ff4d4d', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '20px', 
+              fontWeight: 'bold',
+              cursor: 'pointer' 
+            }}>
+            Logout
+          </button>
+        ) : (
+          <button 
+            onClick={() => navigate('/login')}
+            style={{ 
+              padding: '8px 20px', 
+              backgroundColor: '#e6d9ef', 
+              color: '#4a3b52', 
+              border: 'none', 
+              borderRadius: '20px', 
+              fontWeight: 'bold',
+              cursor: 'pointer' 
+            }}>
+            Login / Sign Up
+          </button>
+        )}
+      </div>
     </nav>
   );
 };

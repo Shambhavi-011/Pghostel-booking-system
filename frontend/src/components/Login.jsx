@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // <-- YEH NAYA IMPORT HAI
 
 const Login = () => {
   const [role, setRole] = useState('tenant');
   const [isLogin, setIsLogin] = useState(true);
   
-  // Form Data States
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate(); // <-- ROUTING KE LIYE NAYA HOOK
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Page refresh roko
+    e.preventDefault(); 
     
-    // API Endpoints (Tumhare Thunder Client data ke hisaab se)
     const apiUrl = isLogin 
-      ? 'http://localhost:8080/api/users/login' // Assume kar raha hu login ka path ye hoga
+      ? 'http://localhost:8080/api/users/login' 
       : 'http://localhost:8080/api/users/signup';
 
     const payload = isLogin 
@@ -25,7 +26,23 @@ const Login = () => {
     try {
       const response = await axios.post(apiUrl, payload);
       alert(isLogin ? "Login Successful! 🎉" : "Registration Successful! 🎉");
-      console.log("Backend Response:", response.data);
+      
+      if (isLogin) {
+        // Login hone par role ko browser mein save kar lo
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('userEmail', email);
+
+        // Role ke hisaab se sahi page par bhejo
+        if (role === 'owner') {
+          navigate('/owner'); // Owner Dashboard par
+        } else {
+          navigate('/'); // Student Home Page par
+        }
+      } else {
+        // Agar signup kiya hai, toh direct login form dikhao
+        setIsLogin(true);
+      }
+      
     } catch (error) {
       console.error(error);
       alert("Error: " + (error.response?.data?.message || "Something went wrong connecting to Backend!"));
@@ -40,7 +57,7 @@ const Login = () => {
 
       {/* Profile Toggle */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "25px", background: "#f4eff7", borderRadius: "8px", padding: "5px" }}>
-        <button type="button" onClick={() => setRole('tenant')} style={{ flex: 1, padding: "10px", backgroundColor: role === 'tenant' ? "#af87c8" : "transparent", color: role === 'tenant' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}>👨‍🎓 Student</button>
+        <button type="button" onClick={() => setRole('tenant')} style={{ flex: 1, padding: "10px", backgroundColor: role === 'tenant' ? "#af87c8" : "transparent", color: role === 'tenant' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}>🎓 Student</button>
         <button type="button" onClick={() => setRole('owner')} style={{ flex: 1, padding: "10px", backgroundColor: role === 'owner' ? "#af87c8" : "transparent", color: role === 'owner' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}>🏠 PG Owner</button>
       </div>
 

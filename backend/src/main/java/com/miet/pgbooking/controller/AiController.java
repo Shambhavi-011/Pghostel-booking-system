@@ -2,6 +2,7 @@ package com.miet.pgbooking.controller;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/ai")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class AiController {
 
     private final RestTemplate restTemplate = new RestTemplate();
