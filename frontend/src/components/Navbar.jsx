@@ -24,9 +24,14 @@ const Navbar = () => {
       top: 0,
       zIndex: 100
     }}>
-      {/* LOGO */}
-      <Link to="/" style={{ textDecoration: 'none', color: '#4a3b52', fontSize: '1.5rem', fontWeight: 'bold' }}>
-        CampusNest ✨
+      {/* UNIQUE LOGO WITH SUBTITLE */}
+      <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column' }}>
+        <span style={{ color: '#4a3b52', fontSize: '1.6rem', fontWeight: '900', letterSpacing: '-0.5px' }}>
+          AlgoRooms✨
+        </span>
+        <span style={{ color: '#80608f', fontSize: '0.75rem', fontWeight: '600', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          PG/Hostel Booking System with AI Recommendation
+        </span>
       </Link>
 
       {/* NAVIGATION LINKS */}

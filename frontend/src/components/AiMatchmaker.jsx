@@ -7,7 +7,10 @@ const AiMatchmaker = ({ onLocationFound }) => {
     area: '', 
     rent: 6000,
     sharing_type: 2,
-    has_ac: 0
+    has_ac: 0,
+    wifi: 0,      
+    mess: 0,      
+    laundry: 0    
   });
 
   const [recommendations, setRecommendations] = useState([]);
@@ -22,7 +25,6 @@ const AiMatchmaker = ({ onLocationFound }) => {
   const findMatch = async () => {
     setLoading(true);
     setError('');
-    
     try {
       const searchQuery = `${formData.area}, ${formData.city}`;
       const geoResponse = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`);
@@ -35,36 +37,31 @@ const AiMatchmaker = ({ onLocationFound }) => {
         userLng = parseFloat(geoResponse.data[0].lon);
         onLocationFound(userLat, userLng, formData.area || formData.city);
       } else {
-        alert("Area exact map par nahi mila, city center dikha rahe hain.");
+        // PURE ENGLISH MAP ALERT
+        alert("Exact area not found on the map. Displaying the default city center instead.");
         onLocationFound(userLat, userLng, formData.city);
       }
 
       const payload = { ...formData, user_lat: userLat, user_lng: userLng };
       const response = await axios.post('http://localhost:8080/api/ai/recommend', payload);
       setRecommendations(response.data.recommendations);
-      
     } catch (err) {
-      setError('System connect nahi ho paya.');
+      // PURE ENGLISH ERROR
+      setError('Error connecting to the AI Matchmaker system. Please check your backend.');
     }
     setLoading(false);
   };
 
-  // Common style for all inputs to prevent overlapping
   const inputStyle = {
-    width: '100%', 
-    padding: '10px 12px', 
-    borderRadius: '8px', 
-    border: 'none', 
-    outline: 'none',
-    boxSizing: 'border-box', // Yeh line overlap hone se rokegi
-    color: '#333'
+    width: '100%', padding: '10px 12px', borderRadius: '8px', 
+    border: 'none', outline: 'none', boxSizing: 'border-box', color: '#333'
   };
 
   return (
     <div style={{ background: "linear-gradient(135deg, #80608f 0%, #4a3b52 100%)", borderRadius: "16px", padding: "30px", color: "white", marginBottom: "40px" }}>
       <h2 style={{ margin: "0 0 25px 0", fontSize: "1.8rem" }}>✨ AI Matchmaker</h2>
       
-      {/* ROW 1: City & Area */}
+      {/* ROW 1 */}
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
         <div style={{ flex: '1', minWidth: '150px' }}>
           <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>City</label>
@@ -74,30 +71,52 @@ const AiMatchmaker = ({ onLocationFound }) => {
             <option value="Ghaziabad">Ghaziabad</option>
           </select>
         </div>
-
         <div style={{ flex: '2', minWidth: '250px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Specific Area / College (e.g. Sector 62, MIET)</label>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Specific Area (e.g. Sector 62, MIET)</label>
           <input type="text" name="area" placeholder="Enter area..." value={formData.area} onChange={handleChange} style={inputStyle} />
         </div>
       </div>
 
-      {/* ROW 2: Rent, Sharing & AC Needed */}
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '25px' }}>
-        <div style={{ flex: '1', minWidth: '150px' }}>
+      {/* ROW 2 */}
+      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
+        <div style={{ flex: '1', minWidth: '120px' }}>
           <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Max Rent (₹)</label>
           <input type="number" name="rent" value={formData.rent} onChange={handleChange} style={inputStyle} />
         </div>
-
-        <div style={{ flex: '1', minWidth: '150px' }}>
+        <div style={{ flex: '1', minWidth: '120px' }}>
           <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Sharing (1/2/3)</label>
           <input type="number" name="sharing_type" value={formData.sharing_type} onChange={handleChange} style={inputStyle} />
         </div>
-
-        <div style={{ flex: '1', minWidth: '150px' }}>
+        <div style={{ flex: '1', minWidth: '120px' }}>
           <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>AC Needed?</label>
           <select name="has_ac" value={formData.has_ac} onChange={handleChange} style={inputStyle}>
             <option value={1}>Yes (AC)</option>
             <option value={0}>No (Non-AC)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* ROW 3 (Amenities) */}
+      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '25px' }}>
+        <div style={{ flex: '1', minWidth: '120px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>WiFi Included?</label>
+          <select name="wifi" value={formData.wifi} onChange={handleChange} style={inputStyle}>
+            <option value={1}>Yes</option>
+            <option value={0}>No Priority</option>
+          </select>
+        </div>
+        <div style={{ flex: '1', minWidth: '120px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Mess / Food?</label>
+          <select name="mess" value={formData.mess} onChange={handleChange} style={inputStyle}>
+            <option value={1}>Yes</option>
+            <option value={0}>No Priority</option>
+          </select>
+        </div>
+        <div style={{ flex: '1', minWidth: '120px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Laundry Service?</label>
+          <select name="laundry" value={formData.laundry} onChange={handleChange} style={inputStyle}>
+            <option value={1}>Yes</option>
+            <option value={0}>No Priority</option>
           </select>
         </div>
       </div>

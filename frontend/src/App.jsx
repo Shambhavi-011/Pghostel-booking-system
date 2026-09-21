@@ -33,9 +33,17 @@ const Home = () => {
       <PropertyList />
       <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
 
-      <h3 style={{ color: "#80608f", fontSize: "2rem", margin: "0 0 20px 0" }}>
-        Explore PGs near: {mapLocation.name}
-      </h3>
+      <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
+
+      {/* NEW STYLED MAP HEADING WITH QUOTE */}
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h3 style={{ color: "#80608f", fontSize: "2.2rem", margin: "0 0 10px 0", fontWeight: "bold" }}>
+          📍 Explore Neighborhoods
+        </h3>
+        <p style={{ color: "#786d84", fontSize: "1.1rem", fontStyle: "italic", margin: 0 }}>
+          "Your next great chapter starts with the perfect place to stay."
+        </p>
+      </div>
       
       {/* Map ko dynamic coordinates pass kar rahe hain */}
       <MapComponent location={mapLocation} />
