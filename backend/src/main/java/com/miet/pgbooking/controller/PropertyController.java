@@ -18,11 +18,15 @@ import com.miet.pgbooking.service.PropertyService;
 @RestController
 @RequestMapping("/api/properties")
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class PropertyController {
 
     @Autowired
     private PropertyService propertyService;
+
+    @GetMapping
+    public List<Property> getProperties() {
+        return propertyService.getAllProperties();
+    }
 
     @PostMapping("/add")
     public Property addProperty(@RequestBody Property property) {
@@ -34,12 +38,12 @@ public class PropertyController {
         return propertyService.getAllProperties();
     }
 
-    // Filter API: e.g. /api/properties/search?city=Meerut&maxRent=8000
+    // Filter API: e.g. /api/properties/search?city=Meerut&maxrent=8000
     @GetMapping("/search")
     public List<Property> searchProperties(
             @RequestParam String city,
-            @RequestParam Double maxRent) {
-        return propertyService.filterProperties(city, maxRent);
+            @RequestParam Double maxprice) {
+        return propertyService.filterProperties(city, maxprice);
     }
 
     // Owner Dashboard ke liye: e.g. /api/properties/owner/1

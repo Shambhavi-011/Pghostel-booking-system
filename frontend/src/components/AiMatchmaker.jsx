@@ -1,132 +1,186 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AiMatchmaker = ({ onLocationFound }) => {
-  const [formData, setFormData] = useState({
-    city: 'Meerut', 
-    area: '', 
-    rent: 6000,
-    sharing_type: 2,
-    has_ac: 0,
-    wifi: 0,      
-    mess: 0,      
-    laundry: 0    
-  });
+const cityCenters = {
+  Meerut: { lat: 28.9845, lng: 77.7064 },
+  Noida: { lat: 28.5355, lng: 77.391 },
+  Ghaziabad: { lat: 28.6692, lng: 77.4538 },
+};
 
-  const [recommendations, setRecommendations] = useState([]);
+const AiMatchmaker = ({ onRecommendations, onLocationFound }) => {
+  const [formData, setFormData] = useState({
+    city: 'Meerut',
+    area: '',
+    maxPrice: 6000,
+    bedSharing: 2,
+    ac: 0,
+    wifi: 0,
+    meal: 0,
+    laundry: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    const value = (e.target.name === 'city' || e.target.name === 'area') ? e.target.value : Number(e.target.value);
-    setFormData({ ...formData, [e.target.name]: value });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((current) => ({
+      ...current,
+      [name]: name === 'city' || name === 'area' ? value : Number(value),
+    }));
   };
 
-  const findMatch = async () => {
+  const findMatch = async (event) => {
+    event.preventDefault();
     setLoading(true);
     setError('');
+
     try {
-      const searchQuery = `${formData.area}, ${formData.city}`;
-      const geoResponse = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`);
-      
-      let userLat = 28.9845; 
-      let userLng = 77.7064;
-      
-      if (geoResponse.data && geoResponse.data.length > 0) {
-        userLat = parseFloat(geoResponse.data[0].lat);
-        userLng = parseFloat(geoResponse.data[0].lon);
-        onLocationFound(userLat, userLng, formData.area || formData.city);
-      } else {
-        // PURE ENGLISH MAP ALERT
-        alert("Exact area not found on the map. Displaying the default city center instead.");
-        onLocationFound(userLat, userLng, formData.city);
+      const { data: properties } = await axios.get('/api/properties/all');
+      if (!Array.isArray(properties)) {
+        throw new Error('The property API returned an invalid response.');
       }
 
-      const payload = { ...formData, user_lat: userLat, user_lng: userLng };
-      const response = await axios.post('http://localhost:8080/api/ai/recommend', payload);
-      setRecommendations(response.data.recommendations);
-    } catch (err) {
-      // PURE ENGLISH ERROR
-      setError('Error connecting to the AI Matchmaker system. Please check your backend.');
+      const payload = {
+        city: formData.city,
+        area: formData.area.trim(),
+        max_price: formData.maxPrice || null,
+        price: formData.maxPrice || null,
+        bed_sharing: formData.bedSharing,
+        sharing_type: formData.bedSharing,
+        ac: formData.ac,
+        has_ac: formData.ac,
+        wifi: formData.wifi,
+        meal: formData.meal,
+        mess: formData.meal,
+        laundry: formData.laundry,
+        properties,
+      };
+      const aiUrl = process.env.REACT_APP_AI_API_URL || 'http://localhost:8000/recommend-pg';
+      const { data } = await axios.post(aiUrl, payload);
+      const matches = data.recommendations || data.top_recommendations;
+      if (!Array.isArray(matches)) {
+        throw new Error(data.error || 'The AI service returned an invalid response.');
+      }
+
+      onRecommendations(matches);
+
+      const center = cityCenters[formData.city] || cityCenters.Meerut;
+      let mapLocation = { ...center, name: formData.area.trim() || formData.city };
+      if (formData.area.trim()) {
+        try {
+          const geoResponse = await axios.get('https://nominatim.openstreetmap.org/search', {
+            params: { format: 'jsonv2', limit: 1, q: `${formData.area}, ${formData.city}` },
+          });
+          if (geoResponse.data?.[0]) {
+            mapLocation = {
+              lat: Number(geoResponse.data[0].lat),
+              lng: Number(geoResponse.data[0].lon),
+              name: formData.area.trim(),
+            };
+          }
+        } catch (geocodingError) {
+          console.warn('Could not geocode the requested area; showing property pins instead.', geocodingError);
+        }
+      }
+      onLocationFound(mapLocation);
+      if (matches.length === 0) {
+        setError('No matching PGs found. Try another area or relax your filters.');
+      }
+    } catch (requestError) {
+      console.error('AI property search failed:', requestError);
+      const errorMessage = requestError.response?.data?.detail
+        || requestError.response?.data?.error
+        || requestError.message
+        || 'Could not get AI recommendations. Check that the backend and AI service are running.';
+      setError(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
+      onRecommendations([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const inputStyle = {
-    width: '100%', padding: '10px 12px', borderRadius: '8px', 
-    border: 'none', outline: 'none', boxSizing: 'border-box', color: '#333'
+    width: '100%',
+    padding: '10px 12px',
+    border: 'none',
+    borderRadius: '8px',
+    color: '#333',
+    boxSizing: 'border-box',
   };
 
+  const fieldStyle = { flex: '1 1 160px', minWidth: '140px' };
+  const labelStyle = { display: 'block', marginBottom: '8px', fontWeight: 500, fontSize: '0.95rem' };
+
   return (
-    <div style={{ background: "linear-gradient(135deg, #80608f 0%, #4a3b52 100%)", borderRadius: "16px", padding: "30px", color: "white", marginBottom: "40px" }}>
-      <h2 style={{ margin: "0 0 25px 0", fontSize: "1.8rem" }}>✨ AI Matchmaker</h2>
-      
-      {/* ROW 1 */}
+    <form
+      onSubmit={findMatch}
+      style={{
+        background: 'linear-gradient(135deg, #80608f 0%, #4a3b52 100%)',
+        borderRadius: '16px',
+        padding: '30px',
+        color: 'white',
+        marginBottom: '40px',
+      }}
+    >
+      <h2 style={{ margin: '0 0 25px', fontSize: '1.8rem' }}>✨ AI Matchmaker</h2>
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
-        <div style={{ flex: '1', minWidth: '150px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>City</label>
-          <select name="city" value={formData.city} onChange={handleChange} style={inputStyle}>
-            <option value="Meerut">Meerut</option>
-            <option value="Noida">Noida</option>
-            <option value="Ghaziabad">Ghaziabad</option>
+        <div style={fieldStyle}>
+          <label htmlFor="match-city" style={labelStyle}>City</label>
+          <select id="match-city" name="city" value={formData.city} onChange={handleChange} style={inputStyle}>
+            {Object.keys(cityCenters).map((city) => <option key={city} value={city}>{city}</option>)}
           </select>
         </div>
-        <div style={{ flex: '2', minWidth: '250px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Specific Area (e.g. Sector 62, MIET)</label>
-          <input type="text" name="area" placeholder="Enter area..." value={formData.area} onChange={handleChange} style={inputStyle} />
+        <div style={{ ...fieldStyle, flexGrow: 2 }}>
+          <label htmlFor="match-area" style={labelStyle}>Area</label>
+          <input id="match-area" name="area" placeholder="Optional area or locality" value={formData.area} onChange={handleChange} style={inputStyle} />
         </div>
-      </div>
-
-      {/* ROW 2 */}
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
-        <div style={{ flex: '1', minWidth: '120px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Max Rent (₹)</label>
-          <input type="number" name="rent" value={formData.rent} onChange={handleChange} style={inputStyle} />
+        <div style={fieldStyle}>
+          <label htmlFor="match-max-price" style={labelStyle}>Maximum price (₹ / month)</label>
+          <input id="match-max-price" name="maxPrice" type="number" min="0" value={formData.maxPrice} onChange={handleChange} style={inputStyle} />
         </div>
-        <div style={{ flex: '1', minWidth: '120px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Sharing (1/2/3)</label>
-          <input type="number" name="sharing_type" value={formData.sharing_type} onChange={handleChange} style={inputStyle} />
-        </div>
-        <div style={{ flex: '1', minWidth: '120px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>AC Needed?</label>
-          <select name="has_ac" value={formData.has_ac} onChange={handleChange} style={inputStyle}>
-            <option value={1}>Yes (AC)</option>
-            <option value={0}>No (Non-AC)</option>
+        <div style={fieldStyle}>
+          <label htmlFor="match-sharing" style={labelStyle}>Sharing</label>
+          <select id="match-sharing" name="bedSharing" value={formData.bedSharing} onChange={handleChange} style={inputStyle}>
+            <option value={1}>Single</option>
+            <option value={2}>Twin / double</option>
+            <option value={3}>Triple</option>
           </select>
         </div>
       </div>
-
-      {/* ROW 3 (Amenities) */}
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '25px' }}>
-        <div style={{ flex: '1', minWidth: '120px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>WiFi Included?</label>
-          <select name="wifi" value={formData.wifi} onChange={handleChange} style={inputStyle}>
-            <option value={1}>Yes</option>
-            <option value={0}>No Priority</option>
-          </select>
-        </div>
-        <div style={{ flex: '1', minWidth: '120px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Mess / Food?</label>
-          <select name="mess" value={formData.mess} onChange={handleChange} style={inputStyle}>
-            <option value={1}>Yes</option>
-            <option value={0}>No Priority</option>
-          </select>
-        </div>
-        <div style={{ flex: '1', minWidth: '120px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500', fontSize: '0.95rem' }}>Laundry Service?</label>
-          <select name="laundry" value={formData.laundry} onChange={handleChange} style={inputStyle}>
-            <option value={1}>Yes</option>
-            <option value={0}>No Priority</option>
-          </select>
-        </div>
+        {[
+          ['ac', 'AC required?'],
+          ['wifi', 'Wi-Fi required?'],
+          ['meal', 'Meals required?'],
+          ['laundry', 'Laundry required?'],
+        ].map(([name, label]) => (
+          <div key={name} style={fieldStyle}>
+            <label htmlFor={`match-${name}`} style={labelStyle}>{label}</label>
+            <select id={`match-${name}`} name={name} value={formData[name]} onChange={handleChange} style={inputStyle}>
+              <option value={0}>No preference</option>
+              <option value={1}>Required</option>
+            </select>
+          </div>
+        ))}
       </div>
-
-      <button onClick={findMatch} disabled={loading} style={{ padding: "14px 24px", fontSize: "1.1rem", backgroundColor: "white", color: "#4a3b52", border: "none", borderRadius: "8px", fontWeight: "bold", cursor: "pointer", width: "100%", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
-        {loading ? 'Searching & Mapping...' : 'Find My Match & Map Location'}
+      <button
+        type="submit"
+        disabled={loading}
+        style={{
+          padding: '14px 24px',
+          backgroundColor: 'white',
+          color: '#4a3b52',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '1.05rem',
+          fontWeight: 'bold',
+          width: '100%',
+        }}
+      >
+        {loading ? 'Finding matches...' : 'Find AI Matches & Show on Map'}
       </button>
-
-      {error && <p style={{ color: '#ffb74d', marginTop: '15px', textAlign: 'center' }}>{error}</p>}
-    </div>
+      {error && <p role="status" style={{ color: '#ffe0b2', marginTop: '15px', textAlign: 'center' }}>{error}</p>}
+    </form>
   );
 };
 

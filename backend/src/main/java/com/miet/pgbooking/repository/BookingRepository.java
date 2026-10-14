@@ -12,6 +12,8 @@ import com.miet.pgbooking.entity.Booking;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     
+    List<Booking> findAllByOrderByBookingDateDesc();
+
     // Student ko uski saari bookings dikhane ke liye
     List<Booking> findByTenantId(Long tenantId);
 

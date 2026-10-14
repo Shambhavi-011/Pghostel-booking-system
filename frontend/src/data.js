@@ -18,4 +18,25 @@ export const STAYS = [
   { id: 107, name: 'Campus View Hostel', rent: 7500, distance: 1, sharing: 2, ac: true, image: 'bedroom.jpg', category: 'unspecified', tagline: 'A home base for campus life.' },
 ].map((stay) => ({ ...stay, college: 'miet' }));
 
+export const getPropertyImage = (property) => {
+  const propertyName = property.pgName?.trim().toLocaleLowerCase();
+  const catalogStay = STAYS.find((stay) => stay.name.toLocaleLowerCase() === propertyName);
+  if (catalogStay) return `/images/${catalogStay.image}`;
+
+  if (property.photoUrl) {
+    try {
+      const photoUrl = new URL(property.photoUrl);
+      const isWebUrl = photoUrl.protocol === 'https:' || photoUrl.protocol === 'http:';
+      const isImageUrl = /\.(avif|gif|jpe?g|png|webp)$/i.test(photoUrl.pathname);
+      if (isWebUrl && isImageUrl) return photoUrl.href;
+    } catch {
+      return null;
+    }
+  }
+
+  const propertyId = Number(property.id || property.excelId?.replace(/\D/g, ''));
+  const datasetStay = STAYS[Number.isFinite(propertyId) ? Math.abs(propertyId) % STAYS.length : 0];
+  return `/images/${datasetStay.image}`;
+};
+
 export const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);

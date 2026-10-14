@@ -22,8 +22,8 @@ public class PropertyService {
         return propertyRepository.findAll();
     }
 
-    public List<Property> filterProperties(String city, Double maxRent) {
-        return propertyRepository.filterProperties(city, maxRent);
+    public List<Property> filterProperties(String city, Double maxprice) {
+        return propertyRepository.filterProperties(city, maxprice);
     }
 
     public List<Property> getPropertiesByOwner(Long ownerId) {

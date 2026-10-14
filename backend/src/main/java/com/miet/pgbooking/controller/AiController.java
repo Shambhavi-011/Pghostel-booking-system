@@ -17,14 +17,14 @@ public class AiController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // 1. Rent Prediction API
-    @PostMapping("/suggest-price")
-    public Map<String, Object> getPriceSuggestion(@RequestBody Map<String, Object> pgDetails) {
-        String pythonApiUrl = "http://localhost:8000/predict-price";
+    // 1. rent Prediction API
+    @PostMapping("/suggest-rent")
+    public Map<String, Object> getrentSuggestion(@RequestBody Map<String, Object> pgDetails) {
+        String pythonApiUrl = "http://localhost:8000/predict-rent";
         try {
             return restTemplate.postForObject(pythonApiUrl, pgDetails, Map.class);
         } catch (Exception e) {
-            return Map.of("error", "AI Price Server se connection fail ho gaya.");
+            return Map.of("error", "AI rent Server se connection fail ho gaya.");
         }
     }
 

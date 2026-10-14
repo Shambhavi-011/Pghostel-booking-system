@@ -25,13 +25,16 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    // Tenant requests a PG
-    @PostMapping("/request")
+    @PostMapping({"", "/request"})
     public Booking requestBooking(@RequestBody Booking booking) {
         return bookingService.createBookingRequest(booking);
     }
 
-    // View Tenant's bookings
+    @GetMapping
+    public List<Booking> getAllBookings() {
+        return bookingService.getAllBookings();
+    }
+
     @GetMapping("/tenant/{tenantId}")
     public List<Booking> getTenantBookings(@PathVariable Long tenantId) {
         return bookingService.getTenantBookings(tenantId);
@@ -43,10 +46,8 @@ public class BookingController {
         return bookingService.getOwnerBookings(ownerId);
     }
 
-    // Owner Accepts/Rejects
     @PutMapping("/{bookingId}/status")
-    public String updateStatus(@PathVariable Long bookingId, @RequestParam String status) {
-        // e.g. /api/bookings/1/status?status=CONFIRMED
+    public Booking updateStatus(@PathVariable Long bookingId, @RequestParam String status) {
         return bookingService.updateBookingStatus(bookingId, status);
     }
 }

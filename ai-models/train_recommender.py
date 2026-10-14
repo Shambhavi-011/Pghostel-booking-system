@@ -8,7 +8,7 @@ data = pd.read_csv('../dataset/pg_catalog.csv')
 
 features = data[['rent', 'distance_to_miet', 'sharing_type', 'has_ac']]
 
-print("2. Data Scale ho raha hai (Taaki Rent aur AC ko equal weight mile)...")
+print("2. Data Scale ho raha hai (Taaki rent aur AC ko equal weight mile)...")
 scaler = MinMaxScaler()
 features_scaled = scaler.fit_transform(features)
 
@@ -31,4 +31,4 @@ distances, indices = model.kneighbors(user_pref_scaled)
 print("AI: User ki pasand ke hisaab se ye top 3 PGs hain:")
 for i in indices[0]:
     pg = data.iloc[i]
-    print(f"- {pg['pg_name']} (Rent: ₹{pg['rent']}, Distance: {pg['distance_to_miet']}km)")
+    print(f"- {pg['pg_name']} (rent: ₹{pg['rent']}, Distance: {pg['distance_to_miet']}km)")

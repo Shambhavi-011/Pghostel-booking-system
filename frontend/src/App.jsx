@@ -8,12 +8,12 @@ import AiMatchmaker from './components/AiMatchmaker';
 import OwnerDashboard from './components/OwnerDashboard';
 
 const Home = () => {
-  // Default map center (Meerut City)
   const [mapLocation, setMapLocation] = useState({
     lat: 28.9845, 
     lng: 77.7064, 
     name: 'Meerut City'
   });
+  const [recommendedProperties, setRecommendedProperties] = useState([]);
 
   return (
     <div style={{ padding: "20px", fontFamily: "sans-serif", maxWidth: "1200px", margin: "0 auto" }}>
@@ -26,16 +26,15 @@ const Home = () => {
         </p>
       </div>
 
-      {/* AI Matchmaker jisme hum setMapLocation pass kar rahe hain */}
-      <AiMatchmaker onLocationFound={(lat, lng, areaName) => setMapLocation({ lat, lng, name: areaName })} />
+      <AiMatchmaker
+        onRecommendations={setRecommendedProperties}
+        onLocationFound={setMapLocation}
+      />
 
       <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
-      <PropertyList />
+      <PropertyList properties={recommendedProperties} />
       <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
 
-      <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
-
-      {/* NEW STYLED MAP HEADING WITH QUOTE */}
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
         <h3 style={{ color: "#80608f", fontSize: "2.2rem", margin: "0 0 10px 0", fontWeight: "bold" }}>
           📍 Explore Neighborhoods
@@ -45,8 +44,7 @@ const Home = () => {
         </p>
       </div>
       
-      {/* Map ko dynamic coordinates pass kar rahe hain */}
-      <MapComponent location={mapLocation} />
+      <MapComponent location={mapLocation} properties={recommendedProperties} />
       
     </div>
   );

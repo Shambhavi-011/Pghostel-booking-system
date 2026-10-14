@@ -8,9 +8,9 @@ print("1. Dataset load ho raha hai...")
 data = pd.read_csv('../dataset/pg_data.csv')
 
 # Features (X) aur Target (y) set karo
-# X = PG ki details, y = Rent jo hume predict karna hai
+# X = PG ki details, y = price jo hume predict karna hai
 X = data[['sharing_type', 'has_ac', 'has_wifi', 'has_food', 'distance_to_miet']]
-y = data['rent']
+y = data['price']
 
 print("2. AI Model train ho raha hai...")
 # Random Forest model banayenge (jaisa research paper me suggested hai)
@@ -21,7 +21,7 @@ model.fit(X, y)
 
 print("3. Model train ho gaya! Isey save kar rahe hain...")
 # Train kiye hue model ko save kar lete hain taaki baad me Java isko use kar sake
-with open('price_predictor.pkl', 'wb') as file:
+with open('rent_predictor.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 print("\n--- TEST Karke Dekhte Hain ---")

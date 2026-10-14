@@ -20,15 +20,22 @@ public class Booking {
     @Column(nullable = false)
     private Long propertyId;
 
-    @Column(nullable = false)
-    private Long tenantId; // Jo student book kar raha hai
+    private Long tenantId;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "move_in_date")
+    private LocalDate moveInDate;
 
     private LocalDate bookingDate;
     
     @Column(nullable = false)
-    private String status; // "PENDING", "CONFIRMED", "REJECTED"
+    private String status;
 
-    // --- Explicit Getters and Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -37,6 +44,15 @@ public class Booking {
 
     public Long getTenantId() { return tenantId; }
     public void setTenantId(Long tenantId) { this.tenantId = tenantId; }
+
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public LocalDate getMoveInDate() { return moveInDate; }
+    public void setMoveInDate(LocalDate moveInDate) { this.moveInDate = moveInDate; }
 
     public LocalDate getBookingDate() { return bookingDate; }
     public void setBookingDate(LocalDate bookingDate) { this.bookingDate = bookingDate; }

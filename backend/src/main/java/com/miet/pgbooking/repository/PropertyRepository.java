@@ -12,9 +12,9 @@ import com.miet.pgbooking.entity.Property;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
-    // Filter query: City match kare aur Rent maxRent se kam ya barabar ho
-    @Query("SELECT p FROM Property p WHERE LOWER(p.city) = LOWER(:city) AND p.rent <= :maxRent")
-    List<Property> filterProperties(@Param("city") String city, @Param("maxRent") Double maxRent);
+    // Filter query: City match kare aur rent maxrent se kam ya barabar ho
+    @Query("SELECT p FROM Property p WHERE LOWER(p.city) = LOWER(:city) AND p.price <= :maxprice")
+    List<Property> filterProperties(@Param("city") String city, @Param("maxprice") Double maxprice);
 
     // Specific owner ke properties fetch karne ke liye
     List<Property> findByOwnerId(Long ownerId);

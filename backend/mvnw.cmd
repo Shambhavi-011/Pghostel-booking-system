@@ -95,9 +95,9 @@ if ((Get-Item $MAVEN_M2_PATH).Target[0] -eq $null) {
   $MAVEN_WRAPPER_DISTS = (Get-Item $MAVEN_M2_PATH).Target[0] + "/wrapper/dists"
 }
 
-$MAVEN_HOME_PARENT = "$MAVEN_WRAPPER_DISTS/$distributionUrlNameMain"
+$MAVEN_HOME_PArent = "$MAVEN_WRAPPER_DISTS/$distributionUrlNameMain"
 $MAVEN_HOME_NAME = ([System.Security.Cryptography.SHA256]::Create().ComputeHash([byte[]][char[]]$distributionUrl) | ForEach-Object {$_.ToString("x2")}) -join ''
-$MAVEN_HOME = "$MAVEN_HOME_PARENT/$MAVEN_HOME_NAME"
+$MAVEN_HOME = "$MAVEN_HOME_PArent/$MAVEN_HOME_NAME"
 
 if (Test-Path -Path "$MAVEN_HOME" -PathType Container) {
   Write-Verbose "found existing MAVEN_HOME at $MAVEN_HOME"
@@ -120,7 +120,7 @@ trap {
   }
 }
 
-New-Item -Itemtype Directory -Path "$MAVEN_HOME_PARENT" -Force | Out-Null
+New-Item -Itemtype Directory -Path "$MAVEN_HOME_PArent" -Force | Out-Null
 
 # Download and Install Apache Maven
 Write-Verbose "Couldn't find MAVEN_HOME, downloading and installing it ..."
@@ -176,7 +176,7 @@ if (!$actualDistributionDir) {
 Write-Verbose "Found extracted Maven distribution directory: $actualDistributionDir"
 Rename-Item -Path "$TMP_DOWNLOAD_DIR/$actualDistributionDir" -NewName $MAVEN_HOME_NAME | Out-Null
 try {
-  Move-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination $MAVEN_HOME_PARENT | Out-Null
+  Move-Item -Path "$TMP_DOWNLOAD_DIR/$MAVEN_HOME_NAME" -Destination $MAVEN_HOME_PArent | Out-Null
 } catch {
   if (! (Test-Path -Path "$MAVEN_HOME" -PathType Container)) {
     Write-Error "fail to move MAVEN_HOME"

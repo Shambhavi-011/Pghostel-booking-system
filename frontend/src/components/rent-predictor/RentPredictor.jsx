@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ShineBorder } from "./ShineBorder";
-import "./RentPredictor.css";
+import "./rentPredictor.css";
 
 const INITIAL = { sharing_type: 2, has_ac: 1, has_wifi: 1, has_food: 1, distance_to_miet: 2 };
 const AMENITIES = [
@@ -13,8 +13,8 @@ const rupees = new Intl.NumberFormat("en-IN", {
   style: "currency", currency: "INR", maximumFractionDigits: 0,
 });
 
-export default function RentPredictor({
-  endpoint = process.env.REACT_APP_RENT_API_URL || "/predict-price",
+export default function rentPredictor({
+  endpoint = process.env.REACT_APP_rent_API_URL || "/predict-rent",
   college = { id: 'miet', short: 'MIET' },
   onSelectMiet,
 }) {
@@ -67,11 +67,11 @@ export default function RentPredictor({
           : `Prediction service returned HTTP ${response.status}. Please try again.`);
       }
       const data = await response.json();
-      if (typeof data.suggested_price !== "number" ||
-          !Number.isFinite(data.suggested_price) || data.suggested_price <= 0) {
+      if (typeof data.suggested_rent !== "number" ||
+          !Number.isFinite(data.suggested_rent) || data.suggested_rent <= 0) {
         throw new Error("The service returned an invalid rent estimate. Please try again.");
       }
-      setResult(data.suggested_price);
+      setResult(data.suggested_rent);
     } catch (err) {
       if (controller.signal.aborted && !timedOut) return;
       setError(timedOut
@@ -148,7 +148,7 @@ export default function RentPredictor({
         <motion.aside className="rp-card rp-result" {...enter}
           transition={reduceMotion ? { duration: 0 } : { ...spring, delay: 0.2 }}>
           <ShineBorder shineColor={["#8b5cf6", "#67e8f9", "#8b5cf6"]} />
-          <div className="rp-result-top"><span className="rp-pill">✦ AI RENT ESTIMATE</span><span className="rp-local">{supported ? 'MIET area' : 'Model coverage'}</span></div>
+          <div className="rp-result-top"><span className="rp-pill">✦ AI rent ESTIMATE</span><span className="rp-local">{supported ? 'MIET area' : 'Model coverage'}</span></div>
           <div className="rp-result-content" aria-live="polite" aria-atomic="true" aria-busy={loading}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div key={loading ? "loading" : error ? "error" : result !== null ? "result" : "empty"}
@@ -157,7 +157,7 @@ export default function RentPredictor({
                 <div className="rp-orbit" aria-hidden="true"><span>{error ? "!" : result !== null ? "₹" : "✦"}</span></div>
                 {loading ? <><h3>Connecting the dots</h3><p>Checking your room preferences with the rent model…</p><div className="rp-loading" aria-hidden="true" /></>
                   : error ? <><h3>Let’s try that again</h3><p className="rp-error">{error}</p></>
-                  : result !== null ? <><p className="rp-result-label">Estimated monthly rent</p><strong className="rp-price">{rupees.format(result)}</strong><p>per month · model estimate</p><span className="rp-estimate-tag">Based on your selected preferences</span></>
+                  : result !== null ? <><p className="rp-result-label">Estimated monthly rent</p><strong className="rp-rent">{rupees.format(result)}</strong><p>per month · model estimate</p><span className="rp-estimate-tag">Based on your selected preferences</span></>
                   : <><h3>{supported ? <>Big plans.<br />A clearer budget.</> : <>New campus.<br />More data needed.</>}</h3><p>{supported ? <>Set your preferences and let the model<br />find a starting point for your rent.</> : <>Select MIET to try the available model.<br />No unrelated estimate will be shown.</>}</p><span className="rp-empty-amount" aria-hidden="true">₹ — — —</span></>}
               </motion.div>
             </AnimatePresence>
