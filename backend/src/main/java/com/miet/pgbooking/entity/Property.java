@@ -1,11 +1,6 @@
 package com.miet.pgbooking.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "properties")
@@ -15,42 +10,388 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "excel_id")
+    private String excelId;
+
+    @Column(name = "pg_name")
     private String pgName;
 
-    @Column(nullable = false)
     private String city;
+    private String locality;
+    private String gender;
 
-    @Column(nullable = false)
-    private Double rent;
+    @Column(name = "bed_sharing")
+    private String bedSharing;
 
-    private Integer sharingType; // 1 = Single, 2 = Double, etc.
-    private Boolean hasAc;
-    private String description;
-    private Long ownerId; // Owner User ka ID
+    @Column(name = "price")
+    private Double price;
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private Double latitude;
+    private Double longitude;
 
-    public String getPgName() { return pgName; }
-    public void setPgName(String pgName) { this.pgName = pgName; }
+    private String water;
+    private String electricity;
+    private String wifi;
+    private String meal;
+    private String ac;
+    private String laundry;
 
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
+    @Column(name = "photo_availability")
+    private String photoAvailability;
 
-    public Double getRent() { return rent; }
-    public void setRent(Double rent) { this.rent = rent; }
+    @Column(name = "data_status")
+    private String dataStatus;
 
-    public Integer getSharingType() { return sharingType; }
-    public void setSharingType(Integer sharingType) { this.sharingType = sharingType; }
+    @Column(name = "photo_url", columnDefinition = "TEXT")
+    private String photoUrl;
 
-    public Boolean getHasAc() { return hasAc; }
-    public void setHasAc(Boolean hasAc) { this.hasAc = hasAc; }
+    @Column(name = "google_maps_search", columnDefinition = "TEXT")
+    private String googleMapsSearch;
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    @Column(name = "coordinate_status")
+    private String coordinateStatus;
 
-    public Long getOwnerId() { return ownerId; }
-    public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
+    @Column(name = "room_type")
+    private String roomType;
+
+    @Column(name = "food_type")
+    private String foodType;
+
+    @Column(name = "meals_included")
+    private String mealsIncluded;
+
+    @Column(name = "food_review_comments", columnDefinition = "TEXT")
+    private String foodReviewComments;
+
+    @Column(name = "room_cleanliness_rating")
+    private Double roomCleanlinessRating;
+
+    @Column(name = "safety_security_rating", columnDefinition = "TEXT")
+    private String safetySecurityRating;
+
+    @Column(name = "overall_rating")
+    private Double overallRating;
+
+    @Column(name = "review_count")
+    private String reviewCount;
+
+    @Column(name = "reviews_comments", columnDefinition = "TEXT")
+    private String reviewsComments;
+
+    private String security;
+    private String parking;
+
+    @Column(name = "power_backup")
+    private String powerBackup;
+
+    @Column(name = "suitable_for")
+    private String suitableFor;
+
+    @Column(name = "customer_budget_match", columnDefinition = "TEXT")
+    private String customerBudgetMatch;
+
+    @Column(name = "ai_recommendation_notes", columnDefinition = "TEXT")
+    private String aiRecommendationNotes;
+
+    @Column(name = "owner_id")
+    private Long ownerId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getExcelId() {
+        return excelId;
+    }
+
+    public void setExcelId(String excelId) {
+        this.excelId = excelId;
+    }
+
+    public String getPgName() {
+        return pgName;
+    }
+
+    public void setPgName(String pgName) {
+        this.pgName = pgName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBedSharing() {
+        return bedSharing;
+    }
+
+    public void setBedSharing(String bedSharing) {
+        this.bedSharing = bedSharing;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getWater() {
+        return water;
+    }
+
+    public void setWater(String water) {
+        this.water = water;
+    }
+
+    public String getElectricity() {
+        return electricity;
+    }
+
+    public void setElectricity(String electricity) {
+        this.electricity = electricity;
+    }
+
+    public String getWifi() {
+        return wifi;
+    }
+
+    public void setWifi(String wifi) {
+        this.wifi = wifi;
+    }
+
+    public String getMeal() {
+        return meal;
+    }
+
+    public void setMeal(String meal) {
+        this.meal = meal;
+    }
+
+    public String getAc() {
+        return ac;
+    }
+
+    public void setAc(String ac) {
+        this.ac = ac;
+    }
+
+    public String getLaundry() {
+        return laundry;
+    }
+
+    public void setLaundry(String laundry) {
+        this.laundry = laundry;
+    }
+
+    public String getPhotoAvailability() {
+        return photoAvailability;
+    }
+
+    public void setPhotoAvailability(String photoAvailability) {
+        this.photoAvailability = photoAvailability;
+    }
+
+    public String getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(String dataStatus) {
+        this.dataStatus = dataStatus;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public String getGoogleMapsSearch() {
+        return googleMapsSearch;
+    }
+
+    public void setGoogleMapsSearch(String googleMapsSearch) {
+        this.googleMapsSearch = googleMapsSearch;
+    }
+
+    public String getCoordinateStatus() {
+        return coordinateStatus;
+    }
+
+    public void setCoordinateStatus(String coordinateStatus) {
+        this.coordinateStatus = coordinateStatus;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+
+    public String getFoodType() {
+        return foodType;
+    }
+
+    public void setFoodType(String foodType) {
+        this.foodType = foodType;
+    }
+
+    public String getMealsIncluded() {
+        return mealsIncluded;
+    }
+
+    public void setMealsIncluded(String mealsIncluded) {
+        this.mealsIncluded = mealsIncluded;
+    }
+
+    public String getFoodReviewComments() {
+        return foodReviewComments;
+    }
+
+    public void setFoodReviewComments(String foodReviewComments) {
+        this.foodReviewComments = foodReviewComments;
+    }
+
+    public Double getRoomCleanlinessRating() {
+        return roomCleanlinessRating;
+    }
+
+    public void setRoomCleanlinessRating(Double roomCleanlinessRating) {
+        this.roomCleanlinessRating = roomCleanlinessRating;
+    }
+
+    public String getSafetySecurityRating() {
+        return safetySecurityRating;
+    }
+
+    public void setSafetySecurityRating(String safetySecurityRating) {
+        this.safetySecurityRating = safetySecurityRating;
+    }
+
+    public Double getOverallRating() {
+        return overallRating;
+    }
+
+    public void setOverallRating(Double overallRating) {
+        this.overallRating = overallRating;
+    }
+
+    public String getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(String reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    public String getReviewsComments() {
+        return reviewsComments;
+    }
+
+    public void setReviewsComments(String reviewsComments) {
+        this.reviewsComments = reviewsComments;
+    }
+
+    public String getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(String security) {
+        this.security = security;
+    }
+
+    public String getParking() {
+        return parking;
+    }
+
+    public void setParking(String parking) {
+        this.parking = parking;
+    }
+
+    public String getPowerBackup() {
+        return powerBackup;
+    }
+
+    public void setPowerBackup(String powerBackup) {
+        this.powerBackup = powerBackup;
+    }
+
+    public String getSuitableFor() {
+        return suitableFor;
+    }
+
+    public void setSuitableFor(String suitableFor) {
+        this.suitableFor = suitableFor;
+    }
+
+    public String getCustomerBudgetMatch() {
+        return customerBudgetMatch;
+    }
+
+    public void setCustomerBudgetMatch(String customerBudgetMatch) {
+        this.customerBudgetMatch = customerBudgetMatch;
+    }
+
+    public String getAiRecommendationNotes() {
+        return aiRecommendationNotes;
+    }
+
+    public void setAiRecommendationNotes(String aiRecommendationNotes) {
+        this.aiRecommendationNotes = aiRecommendationNotes;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    // Is class me jakar ek baar aur Right-click -> Source Action -> Generate
+    // Getters and Setters kar lena
 }
