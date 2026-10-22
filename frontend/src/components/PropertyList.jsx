@@ -29,14 +29,19 @@ const PropertyPhoto = ({ property, className = '' }) => {
   );
 };
 
-const PropertyList = ({ properties = [] }) => {
+// Yahan title aur emptyMessage props add kiye hain
+const PropertyList = ({ 
+  properties = [], 
+  title = "AI Recommended PGs & Hostels", 
+  emptyMessage = "Set your preferences above and find your AI-matched stays." 
+}) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
 
   return (
     <section className="property-section" aria-labelledby="property-list-title">
-      <h2 id="property-list-title">AI Recommended PGs &amp; Hostels</h2>
+      <h2 id="property-list-title">{title}</h2>
       {properties.length === 0 ? (
-        <p className="property-empty">Set your preferences above and find your AI-matched stays.</p>
+        <p className="property-empty">{emptyMessage}</p>
       ) : (
         <div className="property-grid">
           {properties.map((property) => (

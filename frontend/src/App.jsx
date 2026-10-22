@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from './components/Navbar';
 import MapComponent from './components/MapComponent';
 import Login from './components/Login'; 
@@ -14,6 +15,21 @@ const Home = () => {
     name: 'Meerut City'
   });
   const [recommendedProperties, setRecommendedProperties] = useState([]);
+  
+  // Trending PGs ke liye states
+  const [allProperties, setAllProperties] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(4); // Shuru mein sirf 4 PGs dikhenge
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/properties")
+      .then(response => {
+        setAllProperties(response.data); 
+      })
+      .catch(error => console.error("Error fetching all properties:", error));
+  }, []);
+
+  // Sirf utne PGs nikalna jitne visibleCount mein set hain
+  const visibleProperties = allProperties.slice(0, visibleCount);
 
   return (
     <div style={{ padding: "20px", fontFamily: "sans-serif", maxWidth: "1200px", margin: "0 auto" }}>
@@ -31,8 +47,46 @@ const Home = () => {
         onLocationFound={setMapLocation}
       />
 
-      <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
-      <PropertyList properties={recommendedProperties} />
+      <hr style={{ margin: "15px 0", border: "1px solid #e6d9ef" }} />
+      <PropertyList 
+        properties={recommendedProperties} 
+        title="✨ AI Recommended PGs & Hostels"
+        emptyMessage="Set your preferences above and find your AI-matched stays." 
+      />
+      <hr style={{ margin: "15px 0", border: "1px solid #e6d9ef" }} />
+
+      {/* Trending Section (Sirf 4 cards ke sath) */}
+      <PropertyList 
+        properties={visibleProperties} 
+        title="🔥 Explore Trending Stays"
+        emptyMessage="Loading top stays..." 
+      />
+      
+      {/* LOAD MORE BUTTON */}
+      {visibleCount < allProperties.length && (
+        <div style={{ textAlign: "center", marginTop: "10px", marginBottom: "30px" }}>
+          <button 
+            onClick={() => setVisibleCount(visibleCount + 4)} // Click karne par 4 aur add ho jayenge
+            style={{
+              padding: "12px 30px",
+              backgroundColor: "#80608f",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "1.1rem",
+              transition: "background-color 0.3s",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#624670'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#80608f'}
+          >
+            Load More Stays ⬇️
+          </button>
+        </div>
+      )}
+
       <hr style={{ margin: "40px 0", border: "1px solid #e6d9ef" }} />
 
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
@@ -44,7 +98,7 @@ const Home = () => {
         </p>
       </div>
       
-      <MapComponent location={mapLocation} properties={recommendedProperties} />
+      <MapComponent location={mapLocation} properties={recommendedProperties.length > 0 ? recommendedProperties : allProperties} />
       
     </div>
   );
