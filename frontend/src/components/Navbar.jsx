@@ -39,11 +39,23 @@ const Navbar = () => {
         <Link to="/" style={{ textDecoration: 'none', color: '#786d84', fontWeight: '500' }}>
           Home
         </Link>
+
+        {/* My Bookings link (Always accessible to check request & pay token) */}
+        <Link to="/my-bookings" style={{ textDecoration: 'none', color: '#80608f', fontWeight: '600' }}>
+          📋 My Bookings
+        </Link>
         
-        {/* Agar Owner login hai tabhi Owner Dashboard dikhao */}
+        {/* Owner Dashboard link */}
         {userRole === 'owner' && (
-          <Link to="/owner" style={{ textDecoration: 'none', color: '#786d84', fontWeight: '500' }}>
-            Owner Dashboard
+          <Link to="/owner" style={{ textDecoration: 'none', color: '#786d84', fontWeight: '600' }}>
+            🏠 Owner Dashboard
+          </Link>
+        )}
+
+        {/* Admin Dashboard link */}
+        {userRole === 'admin' && (
+          <Link to="/admin" style={{ textDecoration: 'none', color: '#e67e22', fontWeight: '700' }}>
+            🛠️ Admin Panel
           </Link>
         )}
         
@@ -60,7 +72,7 @@ const Navbar = () => {
               fontWeight: 'bold',
               cursor: 'pointer' 
             }}>
-            Logout
+            Logout ({userRole})
           </button>
         ) : (
           <button 

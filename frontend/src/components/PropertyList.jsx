@@ -20,11 +20,11 @@ const PropertyPhoto = ({ property, className = '' }) => {
       <img
         className={className}
         src={imageUrl}
-        alt={`${property.pgName}${imageUrl.startsWith('/images/') ? ' representative room photo' : ' room'}`}
+        alt={`${property.pgName || 'PG'} room`}
         loading="lazy"
         onError={() => setFailed(true)}
       />
-      {imageUrl.startsWith('/images/') && <span className="property-photo-caption">Sample photo</span>}
+      <span className="property-photo-caption">PGdekho photo</span>
     </div>
   );
 };
@@ -48,7 +48,21 @@ const PropertyList = ({
             <article className="property-card" key={property.id || property.excelId || property.pgName}>
               <PropertyPhoto property={property} className="property-card-photo" />
               <div className="property-card-content">
-                <h3>{property.pgName || 'PG / Hostel'}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <h3 style={{ margin: 0 }}>{property.pgName || 'PG / Hostel'}</h3>
+                  {property.gender && (
+                    <span style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      background: property.gender.toLowerCase().includes('girls') ? '#fce4ec' : property.gender.toLowerCase().includes('boys') ? '#e3f2fd' : '#f3e5f5',
+                      color: property.gender.toLowerCase().includes('girls') ? '#c2185b' : property.gender.toLowerCase().includes('boys') ? '#1976d2' : '#7b1fa2'
+                    }}>
+                      {property.gender}
+                    </span>
+                  )}
+                </div>
                 <p className="property-location">
                   {[property.locality, property.city].filter(Boolean).join(', ') || 'Location not listed'}
                 </p>

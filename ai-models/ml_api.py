@@ -41,6 +41,7 @@ class UserPreferences(BaseModel):
     rent: Optional[float] = None
     bed_sharing: Optional[int] = None
     sharing_type: Optional[int] = None
+    gender: Optional[str] = 'all'
     ac: int = 0
     has_ac: Optional[int] = None
     wifi: int = 0
@@ -133,11 +134,19 @@ def _property_features(property_data, preference):
 def recommend_pg(prefs: UserPreferences):
     requested_city = prefs.city.strip().lower()
     requested_area = prefs.area.strip().lower()
+    requested_gender = (prefs.gender or 'all').strip().lower()
     max_price = prefs.max_price or prefs.price or prefs.rent
     requested_sharing = prefs.bed_sharing or prefs.sharing_type
     eligible = []
 
     for property_data in prefs.properties:
+        property_gender = str(property_data.get('gender') or '').strip().lower()
+        if requested_gender == 'boys' and 'girl' in property_gender and 'co' not in property_gender:
+            continue
+        if requested_gender == 'girls' and 'boy' in property_gender and 'co' not in property_gender:
+            continue
+        if requested_gender == 'coed' and 'co' not in property_gender and 'all' not in property_gender:
+            continue
         property_city = str(property_data.get('city') or '').strip().lower()
         property_area = ' '.join([
             str(property_data.get('locality') or ''),

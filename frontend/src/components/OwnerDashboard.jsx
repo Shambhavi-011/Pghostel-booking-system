@@ -126,7 +126,7 @@ const OwnerDashboard = () => {
                 <p style={{ margin: '0 0 5px', color: '#666' }}>📞 {request.phone || 'Phone not provided'}</p>
                 <p style={{ margin: '0 0 5px', color: '#666' }}>Move-in: {request.moveInDate || 'Not provided'}</p>
                 <p style={{ margin: 0, fontWeight: 700, color: request.status === 'PENDING' ? '#ff9800' : request.status === 'CONFIRMED' ? '#4caf50' : '#f44336' }}>
-                  Status: {request.status}
+                  Request: {request.status} | Payment: {request.paymentStatus === "PAID" ? "✅ ₹500 PAID" : "⏳ UNPAID"}
                 </p>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>

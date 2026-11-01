@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
+import { CATALOG_PROPERTIES } from './data';
 import Navbar from './components/Navbar';
 import MapComponent from './components/MapComponent';
 import Login from './components/Login'; 
 import PropertyList from './components/PropertyList';
 import AiMatchmaker from './components/AiMatchmaker';
 import OwnerDashboard from './components/OwnerDashboard';
+import AdminDashboard from './components/AdminDashboard';
+import MyBookings from './components/MyBookings';
 
 const Home = () => {
   const [mapLocation, setMapLocation] = useState({
@@ -16,16 +19,23 @@ const Home = () => {
   });
   const [recommendedProperties, setRecommendedProperties] = useState([]);
   
-  // Trending PGs ke liye states
-  const [allProperties, setAllProperties] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(4); // Shuru mein sirf 4 PGs dikhenge
+  // Trending PGs ke liye states (defaults to verified PGdekho catalog properties)
+  const [allProperties, setAllProperties] = useState(CATALOG_PROPERTIES);
+  const [visibleCount, setVisibleCount] = useState(4); // Shuru mein 4 PGs dikhenge
 
   useEffect(() => {
     axios.get("http://localhost:8080/api/properties")
       .then(response => {
-        setAllProperties(response.data); 
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setAllProperties(response.data);
+        } else {
+          setAllProperties(CATALOG_PROPERTIES);
+        }
       })
-      .catch(error => console.error("Error fetching all properties:", error));
+      .catch(error => {
+        console.info("Backend not active; serving verified PGdekho properties catalog.");
+        setAllProperties(CATALOG_PROPERTIES);
+      });
   }, []);
 
   // Sirf utne PGs nikalna jitne visibleCount mein set hain
@@ -66,7 +76,7 @@ const Home = () => {
       {visibleCount < allProperties.length && (
         <div style={{ textAlign: "center", marginTop: "10px", marginBottom: "30px" }}>
           <button 
-            onClick={() => setVisibleCount(visibleCount + 4)} // Click karne par 4 aur add ho jayenge
+            onClick={() => setVisibleCount(visibleCount + 4)}
             style={{
               padding: "12px 30px",
               backgroundColor: "#80608f",
@@ -113,6 +123,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/owner" element={<OwnerDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
         </Routes>
       </div>
     </Router>

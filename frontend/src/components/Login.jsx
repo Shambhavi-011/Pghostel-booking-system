@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // <-- YEH NAYA IMPORT HAI
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [role, setRole] = useState('tenant');
@@ -10,7 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigate = useNavigate(); // <-- ROUTING KE LIYE NAYA HOOK
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
@@ -24,19 +24,21 @@ const Login = () => {
       : { name, email, password, role };
 
     try {
-      const response = await axios.post(apiUrl, payload);
+      await axios.post(apiUrl, payload);
       alert(isLogin ? "Login Successful! 🎉" : "Registration Successful! 🎉");
       
       if (isLogin) {
-        // Login hone par role ko browser mein save kar lo
+        // Login hone par role aur email browser mein save kar lo
         localStorage.setItem('userRole', role);
         localStorage.setItem('userEmail', email);
 
         // Role ke hisaab se sahi page par bhejo
-        if (role === 'owner') {
+        if (role === 'admin') {
+          navigate('/admin'); // Admin Dashboard par
+        } else if (role === 'owner') {
           navigate('/owner'); // Owner Dashboard par
         } else {
-          navigate('/'); // Student Home Page par
+          navigate('/my-bookings'); // Student Bookings Page par
         }
       } else {
         // Agar signup kiya hai, toh direct login form dikhao
@@ -50,15 +52,34 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "60px auto", padding: "30px", background: "rgba(255, 255, 255, 0.9)", backdropFilter: "blur(10px)", border: "1px solid #e6d9ef", borderRadius: "15px", boxShadow: "0 10px 25px rgba(128, 96, 143, 0.1)" }}>
+    <div style={{ maxWidth: "420px", margin: "60px auto", padding: "30px", background: "rgba(255, 255, 255, 0.9)", backdropFilter: "blur(10px)", border: "1px solid #e6d9ef", borderRadius: "15px", boxShadow: "0 10px 25px rgba(128, 96, 143, 0.1)" }}>
       <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#786d84" }}>
-        {isLogin ? "Welcome to CampusNest" : "Create an Account"}
+        {isLogin ? "Welcome to AlgoRooms" : "Create an Account"}
       </h2>
 
-      {/* Profile Toggle */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "25px", background: "#f4eff7", borderRadius: "8px", padding: "5px" }}>
-        <button type="button" onClick={() => setRole('tenant')} style={{ flex: 1, padding: "10px", backgroundColor: role === 'tenant' ? "#af87c8" : "transparent", color: role === 'tenant' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}>🎓 Student</button>
-        <button type="button" onClick={() => setRole('owner')} style={{ flex: 1, padding: "10px", backgroundColor: role === 'owner' ? "#af87c8" : "transparent", color: role === 'owner' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s" }}>🏠 PG Owner</button>
+      {/* Profile Toggle with Student, Owner, and Admin */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "25px", background: "#f4eff7", borderRadius: "8px", padding: "5px", gap: "4px" }}>
+        <button
+          type="button"
+          onClick={() => setRole('tenant')}
+          style={{ flex: 1, padding: "9px 5px", backgroundColor: role === 'tenant' ? "#af87c8" : "transparent", color: role === 'tenant' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s", fontSize: "0.85rem" }}
+        >
+          🎓 Student
+        </button>
+        <button
+          type="button"
+          onClick={() => setRole('owner')}
+          style={{ flex: 1, padding: "9px 5px", backgroundColor: role === 'owner' ? "#af87c8" : "transparent", color: role === 'owner' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s", fontSize: "0.85rem" }}
+        >
+          🏠 Owner
+        </button>
+        <button
+          type="button"
+          onClick={() => setRole('admin')}
+          style={{ flex: 1, padding: "9px 5px", backgroundColor: role === 'admin' ? "#af87c8" : "transparent", color: role === 'admin' ? "white" : "#80608f", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold", transition: "0.3s", fontSize: "0.85rem" }}
+        >
+          🛠️ Admin
+        </button>
       </div>
 
       {/* Form with API Submit */}
@@ -70,7 +91,7 @@ const Login = () => {
         <input type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)} style={{ padding: "12px", borderRadius: "8px", border: "1px solid #d5c8de", outline: "none" }} />
         
         <button type="submit" style={{ padding: "12px", backgroundColor: "#80608f", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontSize: "16px", fontWeight: "bold", marginTop: "10px" }}>
-          {isLogin ? 'Login' : 'Register'} as {role === 'tenant' ? 'Student' : 'Owner'}
+          {isLogin ? 'Login' : 'Register'} as {role === 'tenant' ? 'Student' : role === 'owner' ? 'PG Owner' : 'Admin'}
         </button>
       </form>
 
